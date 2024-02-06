@@ -51,7 +51,7 @@ def get_image_desc(image_url):
         return result["_source"]["title"], result["_source"]["description"]
     else:
         # get image title and description
-        url = "http://localhost2:50075/img_desc"
+        url = "http://model_url:50075/img_desc"
         payload = json.dumps({"url": image_url})
         headers = {'Content-Type': 'application/json'}
         response = requests.request("POST", url, headers=headers, data=payload)
@@ -75,7 +75,7 @@ def insert_es_data(url, title, desc):
 
 
 def get_rerank_result(text_list):
-    url = "http://localhost2:50074/rerank"
+    url = "http://model_url:50074/rerank"
     payload = json.dumps({
         "texts": [
             {
