@@ -40,7 +40,7 @@ def get_image_desc(image_url, image_tag):
     # load image
     image = load_image(image_url)
     # get image title and description
-    url = "http://35.89.147.116:50075/img_desc"
+    url = "http://localhost2:50075/img_desc"
     payload = json.dumps({"url": image_url})
     headers = {'Content-Type': 'application/json'}
     response = requests.request("POST", url, headers=headers, data=payload)
