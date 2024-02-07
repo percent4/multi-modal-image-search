@@ -24,16 +24,18 @@ src/serve/image_search_server.py
 
 - 单个短语
 
-![image-search-单个短语.png](https://s2.loli.net/2024/02/06/wZPxnagSDf5H2sv.png)
+![image-search-单个短语1.png](https://s2.loli.net/2024/02/07/9xKPRYX1ZbQB5Sz.png)
+![image-search-单个短语2.png](https://s2.loli.net/2024/02/07/ajvFCI4NZtBTH5s.png)
+![image-search-单个短语3.png](https://s2.loli.net/2024/02/07/CeGMUjNEBZ8ThHQ.png)
 
 - 多个短语
 
-![image-search-多个短语.png](https://s2.loli.net/2024/02/06/BGANMebhZQwnUOc.png)
+![image-search-多个短语1.png](https://s2.loli.net/2024/02/07/YwvpK2BakXuziER.png)
+![image-search-多个短语2.png](https://s2.loli.net/2024/02/07/CPZywoEUgXHsRpQ.png)
+![image-search-多个短语3.png](https://s2.loli.net/2024/02/07/wpgVYUAE6HdP4fJ.png)
 
 ### 以图搜图
 
-![image-search-以图搜图1.png](https://s2.loli.net/2024/02/06/ZFPMJTvtgYna31f.png)
-
-![image-search-以图搜图2.png](https://s2.loli.net/2024/02/06/B8NlIKtx5vJzgSV.png)
-
-![image-search-以图搜图3.png](https://s2.loli.net/2024/02/06/Mx2954wd3RDUzZ8.png)
+![image-search-以图搜图1.png](https://s2.loli.net/2024/02/07/2ZdHhRr7cgoDFyW.png)
+![image-search-以图搜图2.png](https://s2.loli.net/2024/02/07/PXRnKO3tl8zvZm6.png)
+![image-search-以图搜图3.png](https://s2.loli.net/2024/02/07/iafwum1IEKvezhn.png)

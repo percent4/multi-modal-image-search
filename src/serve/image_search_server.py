@@ -9,6 +9,7 @@ from PIL import Image
 from io import BytesIO
 from datetime import datetime as dt
 from elasticsearch import Elasticsearch
+from uuid import uuid4
 
 # 连接Elasticsearch
 es_client = Elasticsearch("http://localhost:9200")
@@ -20,6 +21,7 @@ def load_image(image_file):
         image = Image.open(BytesIO(response.content)).convert('RGB')
     else:
         image = Image.open(image_file).convert('RGB')
+
     return image
 
 
@@ -113,16 +115,18 @@ def image_search_by_http(query_str):
     if search_result['hits']['hits']:
         es_search_result = {_['_source']['description'][:200]: _['_source']['url'] for _ in
                             search_result['hits']['hits']}
+        desc_title_dict = {_['_source']['description'][:200]: _['_source']['title'] for _ in
+                           search_result['hits']['hits']}
         # get title rerank result
         text_list = [[image_desc[:200], key] for key in es_search_result.keys()]
         rerank_result = get_rerank_result(text_list=text_list)
-        # get at most 3 similar images
+        # get at most 5 similar images
         i = 0
         for record in rerank_result:
             score, image_desc, other_desc = record
             if image_desc != other_desc and score > 0.4:
                 i += 1
-                result.append(es_search_result[other_desc])
+                result.append([es_search_result[other_desc], desc_title_dict[other_desc]])
                 if i > 4:
                     break
     return result
@@ -144,32 +148,40 @@ def image_search_by_text(query_str):
     }
     search_result = es_client.search(index='image-search', body=dsl)
     if search_result['hits']['hits']:
-        result = [_['_source']['url'] for _ in search_result['hits']['hits']]
+        result = [[_['_source']['url'], _['_source']['title']] for _ in search_result['hits']['hits']]
     print('search result: ', result)
     return result
 
 
 def image_search(query):
+    user_image_image = None
     if query.startswith("http"):
+        user_image_image = query
         result = image_search_by_http(query)
-        images = [load_image(url) for url in result]
-        return query, images
     else:
         result = image_search_by_text(query)
-        images = [load_image(url) for url in result]
-        return None, images
+
+    images = [load_image(record[0]) for record in result]
+    if len(images) >= 3:
+        images = images[:3]
+    else:
+        for _ in range(3 - len(images)):
+            images.append(None)
+    return user_image_image, images[0], images[1], images[2]
 
 
 if __name__ == '__main__':
     with gr.Blocks() as demo:
         with gr.Row():
-            with gr.Column():
+            with gr.Column(scale=0.3):
                 user_input = gr.TextArea(lines=1, placeholder="Enter search word", label="Search")
-                user_input_image = gr.Image(height=10, width=10)
-            with gr.Column():
-                search_image = gr.Gallery(label="image").style(height='auto', columns=4)
+                user_input_image = gr.Image()
+            with gr.Column(scale=0.2):
+                search_image1 = gr.outputs.Image(type='pil').style(height=200)
+                search_image2 = gr.outputs.Image(type='pil').style(height=200)
+                search_image3 = gr.outputs.Image(type='pil').style(height=200)
                 submit = gr.Button("Search")
         submit.click(fn=image_search,
                      inputs=user_input,
-                     outputs=[user_input_image, search_image])
-    demo.launch()
+                     outputs=[user_input_image, search_image1, search_image2, search_image3])
+    demo.launch(server_name="0.0.0.0", server_port=7680)
