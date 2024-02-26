@@ -5,7 +5,7 @@
 from elasticsearch import Elasticsearch
 
 # 连接Elasticsearch
-es_client = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+es_client = Elasticsearch("http://localhost:9200")
 
 # 创建新的ES index
 mapping = {
@@ -27,10 +27,13 @@ mapping = {
         "insert_time": {
             "type": "date",
             "format": "yyyy-MM-dd HH:mm:ss"
+        },
+        'ocr_result': {
+            'type': 'text'
         }
     }
 }
 
-es_client.indices.create(index='image-search', ignore=400)
-result = es_client.indices.put_mapping(index='image-search', body=mapping)
+es_client.indices.create(index='image-search-ocr', ignore=400)
+result = es_client.indices.put_mapping(index='image-search-ocr', body=mapping)
 print(result)

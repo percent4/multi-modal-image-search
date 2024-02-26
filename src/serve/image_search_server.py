@@ -35,7 +35,7 @@ def is_image_in_es(url):
         },
         "size": 5
     }
-    search_result = es_client.search(index='image-search', body=dsl)
+    search_result = es_client.search(index='image-search-ocr', body=dsl)
     if search_result['hits']['hits']:
         url_result = {_['_source']['url']: _['_id'] for _ in search_result['hits']['hits']}
         if url in url_result:
@@ -48,12 +48,12 @@ def is_image_in_es(url):
 def get_image_desc(image_url):
     image_exists, _id = is_image_in_es(image_url)
     if image_exists:
-        result = es_client.get(index="image-search", id=_id)
+        result = es_client.get(index="image-search-ocr", id=_id)
         print("get image info by ElasticSearch!")
         return result["_source"]["title"], result["_source"]["description"]
     else:
         # get image title and description
-        url = "http://model_url:50075/img_desc"
+        url = "http://localhost:50075/img_desc"
         payload = json.dumps({"url": image_url})
         headers = {'Content-Type': 'application/json'}
         response = requests.request("POST", url, headers=headers, data=payload)
@@ -72,12 +72,12 @@ def insert_es_data(url, title, desc):
             "tag": "search",
             "insert_time": dt.now().strftime("%Y-%m-%d %H:%M:%S")
             }
-        es_client.index(index="image-search", document=doc)
+        es_client.index(index="image-search-ocr", document=doc)
         print(f"insert {url} into es successfully!")
 
 
 def get_rerank_result(text_list):
-    url = "http://model_url:50074/rerank"
+    url = "http://localhost:50074/rerank"
     payload = json.dumps({
         "texts": [
             {
@@ -111,7 +111,7 @@ def image_search_by_http(query_str):
         },
         "size": 10
     }
-    search_result = es_client.search(index='image-search', body=dsl)
+    search_result = es_client.search(index='image-search-ocr', body=dsl)
     if search_result['hits']['hits']:
         es_search_result = {_['_source']['description'][:200]: _['_source']['url'] for _ in
                             search_result['hits']['hits']}
@@ -146,7 +146,7 @@ def image_search_by_text(query_str):
         },
         "size": 5
     }
-    search_result = es_client.search(index='image-search', body=dsl)
+    search_result = es_client.search(index='image-search-ocr', body=dsl)
     if search_result['hits']['hits']:
         result = [[_['_source']['url'], _['_source']['title']] for _ in search_result['hits']['hits']]
     print('search result: ', result)
@@ -177,9 +177,9 @@ if __name__ == '__main__':
                 user_input = gr.TextArea(lines=1, placeholder="Enter search word", label="Search")
                 user_input_image = gr.Image()
             with gr.Column(scale=0.2):
-                search_image1 = gr.outputs.Image(type='pil').style(height=200)
-                search_image2 = gr.outputs.Image(type='pil').style(height=200)
-                search_image3 = gr.outputs.Image(type='pil').style(height=200)
+                search_image1 = gr.Image(type='pil', height=200)
+                search_image2 = gr.Image(type='pil', height=200)
+                search_image3 = gr.Image(type='pil', height=200)
                 submit = gr.Button("Search")
         submit.click(fn=image_search,
                      inputs=user_input,

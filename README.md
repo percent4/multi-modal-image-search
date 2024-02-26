@@ -1,5 +1,12 @@
 本项目使用LLaVA 1.6多模态模型实现以文搜图和以图搜图功能。
 
+### OCR模型
+
+PaddleOCR
+
+模型介绍及部署方法: https://www.paddlepaddle.org.cn/hubdetail?name=ch_pp-ocrv3&en_category=TextRecognition
+
+
 ### 多模态模型
 
 LLaVA 1.6
